@@ -1,0 +1,9 @@
+[workspace]
+
+members = [
+    "base",
+    "derive_builder_sugar",
+    "derive_params_sugar",
+    "examples",
+    "usage",   
+]

@@ -1,0 +1,9 @@
+[package]
+name = "usage"
+version = "0.1.0"
+authors = ["Sam Sieber <swsieber@gmail.com>"]
+
+[dependencies]
+derive_builder_sugar = { path = "../derive_builder_sugar"}
+examples = { path = "../examples"}
+base = { path = "../base"}

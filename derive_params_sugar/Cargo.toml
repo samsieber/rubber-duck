@@ -1,0 +1,14 @@
+[package]
+name = "derive_params_sugar"
+version = "0.1.0"
+authors = ["Sam Sieber <swsieber@gmail.com>"]
+
+[dependencies]
+syn = { version = "0.15", features = ["full", "visit-mut", "visit", "extra-traits"] }
+proc-macro2 = { version = "0.4", features = ["nightly"] }
+quote = "0.6"
+
+derive_builder_sugar = { path = "../derive_builder_sugar"}
+
+[lib]
+proc-macro = true
