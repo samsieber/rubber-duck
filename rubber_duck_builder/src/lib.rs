@@ -5,57 +5,56 @@ extern crate proc_macro2;
 extern crate syn;
 #[macro_use]
 extern crate quote;
-use proc_macro::TokenStream;
 use syn::export::Span;
 use syn::export::ToTokens;
-use syn::{parse_macro_input, Expr, Field, Fields, Ident, Item, Lit, Meta, MetaNameValue, Type, GenericArgument, PathArguments};
-use syn::PathSegment;
 use syn::AngleBracketedGenericArguments;
+use syn::PathSegment;
+use syn::{
+    parse_macro_input, Expr, Field, Fields, GenericArgument, Ident, Item, Lit, Meta, MetaNameValue,
+    PathArguments, Type,
+};
 
 mod util;
 
 enum IsOption {
-  True(Type),
-  False,
+    True(Type),
+    False,
 }
 
-fn extractOptionType(wrapped_type: &AngleBracketedGenericArguments) -> Type{
-  let value = wrapped_type.args.iter().next().unwrap();
-  match value {
-    GenericArgument::Type(ty) => ty.clone(),
-    _ => panic!("Unhandled type"),
-  }
+fn extract_option_type(wrapped_type: &AngleBracketedGenericArguments) -> Type {
+    let value = wrapped_type.args.iter().next().unwrap();
+    match value {
+        GenericArgument::Type(ty) => ty.clone(),
+        _ => panic!("Unhandled type"),
+    }
 }
 
-fn getOptionType(ty: Type) -> IsOption{
-  match ty {
-    Type::Path(ty) => {
-      match ty.path.segments.iter().next() {
-        Some(pp) => {
-          let PathSegment {
-             ident, ref arguments
-          } = pp;
-          if format!("{}", &ident) == "Option" {
-            IsOption::True(match arguments {
-              PathArguments::AngleBracketed(args) => {
-                extractOptionType(args)
-              },
-              _ => panic!("Can't handle this type of option"),
-            })
-          } else {
-            IsOption::False
-          }
+fn get_option_type(ty: Type) -> IsOption {
+    match ty {
+        Type::Path(ty) => match ty.path.segments.iter().next() {
+            Some(pp) => {
+                let PathSegment {
+                    ident,
+                    ref arguments,
+                } = pp;
+                if format!("{}", &ident) == "Option" {
+                    IsOption::True(match arguments {
+                        PathArguments::AngleBracketed(args) => extract_option_type(args),
+                        _ => panic!("Can't handle this type of option"),
+                    })
+                } else {
+                    IsOption::False
+                }
+            }
+            _ => IsOption::False,
         },
         _ => IsOption::False,
-      }
-    },
-    _ => IsOption::False,
-  }
+    }
 }
 
 #[proc_macro_attribute]
 pub fn gen_typesafe_builder(
-    args: proc_macro::TokenStream,
+    _args: proc_macro::TokenStream,
     input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
     let generated_parts = {
@@ -63,9 +62,11 @@ pub fn gen_typesafe_builder(
         match parsed {
             Item::Struct(mut struct_item) => {
                 let parsed_fields = parse_fields(&mut struct_item.fields);
-                let mut parts = vec![quote!(pub struct Unset;), quote!(#struct_item)];
+                let mut parts = vec![quote!(#struct_item)];
 
-                let unset = Ident::new("Unset", Span::call_site());
+                let unset =
+//                      quote!(());
+                      Ident::new("Unset", Span::call_site());
 
                 let base_types = || -> Vec<Box<dyn ToTokens>> {
                     parsed_fields
@@ -86,24 +87,29 @@ pub fn gen_typesafe_builder(
                     let struct_types = parsed_fields.iter().map(|v| &v.name);
 
                     quote!(
+
+                    #[allow(non_snake_case)]
+                    #[allow(non_camel_case_types)]
+                    #[doc(hidden)]
                     pub struct #builder_name<#(#struct_types),*>{
                       #(#idents: #field_types,)*
                     }
                   )
                 });
 
-                parts.push ({
-                  let field_types = parsed_fields.iter().map(|v| {
-                    if v.default_value.is_some() {
-                      let ty = &v.field.ty;
-                      quote!(#ty)
-                    } else {
-                      quote!(#unset)
-                    }
-                  });
+                parts.push({
+                    let field_types = parsed_fields.iter().map(|v| {
+                        if v.default_value.is_some() {
+                            let ty = &v.field.ty;
+                            quote!(#ty)
+                        } else {
+                            quote!(#unset)
+                        }
+                    });
 
-                  quote!(
+                    quote!(
                     impl #struct_name {
+                      #[allow(non_camel_case_types)]
                       pub fn builder() -> #builder_name<#(#field_types),*> {
                         #builder_name::new()
                       }
@@ -120,10 +126,9 @@ pub fn gen_typesafe_builder(
                             quote!(#unset)
                         }
                     });
-                    let unsets = parsed_fields.iter().map(|v| &unset);
+                    let unsets = parsed_fields.iter().map(|_v| &unset);
                     let field_decs = parsed_fields.iter().map(|f| {
                         let ident = &f.name;
-                        let typ = &f.field.ty;
                         if let Some(ref default_value) = f.default_value {
                             quote!(#ident : #default_value,)
                         } else {
@@ -132,6 +137,7 @@ pub fn gen_typesafe_builder(
                     });
                     quote!(
                       impl #builder_name<#(#unsets),*>{
+                        #[allow(non_camel_case_types)]
                         pub fn new() -> #builder_name<#(#field_types),*> {
                           #builder_name {
                             #(#field_decs)*
@@ -142,12 +148,12 @@ pub fn gen_typesafe_builder(
                 });
 
                 parts.push({
-                    let idents = parsed_fields.iter().map(|v| &v.name);
                     let field_names = parsed_fields.iter().map(|v| &v.name);
                     let field_names_2 = parsed_fields.iter().map(|v| &v.name);
                     let struct_types = parsed_fields.iter().map(|v| &v.field.ty);
 
                     quote!(
+                      #[allow(non_camel_case_types)]
                       impl #builder_name<#(#struct_types),*>{
                         pub fn build(self) -> #struct_name {
                           #struct_name {
@@ -163,7 +169,7 @@ pub fn gen_typesafe_builder(
                     .enumerate()
                     .map(|(idx, field)| {
                         let mut impl_types = base_types();
-                        if let Some(ref df) = field.default_value {
+                        if field.default_value.is_some() {
                         } else {
                             impl_types.remove(idx);
                         }
@@ -195,13 +201,14 @@ pub fn gen_typesafe_builder(
                               quote!(self.#n)
                             });
 
-                        println!("{} - {}", impl_types.len(), struct_types.len());
+//                        println!("{} - {}", impl_types.len(), struct_types.len());
 
-                        let optionType = getOptionType(value_type.clone());
+                        let option_type = get_option_type(value_type.clone());
 
-                      match optionType {
+                      match option_type {
                         IsOption::False => {
                           quote!(
+                            #[allow(non_camel_case_types)]
                             impl <#(#impl_types),*> #builder_name<#(#struct_types),*> {
                                 pub fn #fn_name(self, value: #value_type) -> #builder_name<#(#fn_types),*> {
                                   #builder_name {
@@ -213,15 +220,16 @@ pub fn gen_typesafe_builder(
                         },
                         IsOption::True(wrapped) => {
                           quote!(
+                            #[allow(non_camel_case_types)]
                             impl <#(#impl_types),*> #builder_name<#(#struct_types),*> {
-                                pub fn #fn_name<VALUE: AsOption<#wrapped>>(self, value: VALUE) -> #builder_name<#(#fn_types),*> {
+                                pub fn #fn_name<VALUE: crate::AsOption<#wrapped>>(self, value: VALUE) -> #builder_name<#(#fn_types),*> {
                                   let value : #value_type = value.as_option();
                                   #builder_name {
                                     #(#field_names : #assignments,)*
                                   }
                                 }
                             }
-                        )
+                          )
                         },
                       }
                     }).collect::<Vec<_>>();
@@ -269,7 +277,7 @@ pub fn gen_typesafe_builder(
 
     let generated = quote!(#(#generated_parts)*);
 
-    println!("{}", &generated);
+//        println!("{}", &generated);
 
     generated.into()
 }
@@ -302,7 +310,7 @@ fn parse_fields(fields: &mut Fields) -> Vec<MyField> {
         .iter_mut()
         .map(|f_ref| {
             let mut plucked_default_values = ::util::drain_map(&mut f_ref.attrs, |a| {
-                println!("{:?}", a.interpret_meta());
+                //                println!("{:?}", a.interpret_meta());
                 a.interpret_meta().and_then(|m| match m {
                     Meta::Word(_) => None,
                     Meta::List(_) => None,

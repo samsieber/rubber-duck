@@ -1,5 +1,5 @@
 [package]
-name = "derive_builder_sugar"
+name = "rubber_duck_builder"
 version = "0.1.0"
 authors = ["Sam Sieber <swsieber@gmail.com>"]
 

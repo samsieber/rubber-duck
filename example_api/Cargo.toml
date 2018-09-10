@@ -1,0 +1,13 @@
+cargo-features = ['edition']
+
+[package]
+name = "example_api"
+version = "0.1.0"
+authors = ["Sam Sieber <swsieber@gmail.com>"]
+edition = '2018'
+
+[dependencies]
+rubber_duck_builder = { path = "../rubber_duck_builder"}
+rubber_duck_params = { path = "../rubber_duck_params"}
+rubber_duck = { path = "../rubber_duck"}
+#base = { path = "../base"}

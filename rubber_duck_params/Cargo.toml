@@ -1,14 +1,17 @@
+cargo-features = ["edition"]
+
 [package]
-name = "derive_params_sugar"
+name = "rubber_duck_params"
 version = "0.1.0"
 authors = ["Sam Sieber <swsieber@gmail.com>"]
+edition = '2018'
 
 [dependencies]
 syn = { version = "0.15", features = ["full", "visit-mut", "visit", "extra-traits"] }
 proc-macro2 = { version = "0.4", features = ["nightly"] }
 quote = "0.6"
 
-derive_builder_sugar = { path = "../derive_builder_sugar"}
+#rubber_duck_builder = { path = "../rubber_duck_builder"}
 
 [lib]
 proc-macro = true

@@ -1,9 +1,11 @@
 [workspace]
 
 members = [
-    "base",
-    "derive_builder_sugar",
-    "derive_params_sugar",
-    "examples",
-    "usage",   
+    "rubber_duck",
+    "rubber_duck_builder",
+    "rubber_duck_params",
+
+
+    "example_api",
+    "example_consumer",
 ]

@@ -1,33 +1,17 @@
 [[package]]
-name = "base"
-version = "0.1.0"
-
-[[package]]
-name = "derive_builder_sugar"
+name = "example_api"
 version = "0.1.0"
 dependencies = [
- "proc-macro2 0.4.18 (registry+https://github.com/rust-lang/crates.io-index)",
- "quote 0.6.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "syn 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rubber_duck 0.1.0",
+ "rubber_duck_builder 0.1.0",
+ "rubber_duck_params 0.1.0",
 ]
 
 [[package]]
-name = "derive_params_sugar"
+name = "example_consumer"
 version = "0.1.0"
 dependencies = [
- "derive_builder_sugar 0.1.0",
- "proc-macro2 0.4.18 (registry+https://github.com/rust-lang/crates.io-index)",
- "quote 0.6.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "syn 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "examples"
-version = "0.1.0"
-dependencies = [
- "base 0.1.0",
- "derive_builder_sugar 0.1.0",
- "derive_params_sugar 0.1.0",
+ "example_api 0.1.0",
 ]
 
 [[package]]
@@ -47,6 +31,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "rubber_duck"
+version = "0.1.0"
+dependencies = [
+ "rubber_duck_builder 0.1.0",
+ "rubber_duck_params 0.1.0",
+]
+
+[[package]]
+name = "rubber_duck_builder"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2 0.4.18 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quote 0.6.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "syn 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "rubber_duck_params"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2 0.4.18 (registry+https://github.com/rust-lang/crates.io-index)",
+ "quote 0.6.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "syn 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "syn"
 version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -60,15 +70,6 @@ dependencies = [
 name = "unicode-xid"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
-name = "usage"
-version = "0.1.0"
-dependencies = [
- "base 0.1.0",
- "derive_builder_sugar 0.1.0",
- "examples 0.1.0",
-]
 
 [metadata]
 "checksum proc-macro2 0.4.18 (registry+https://github.com/rust-lang/crates.io-index)" = "afa4d377067cc02eb5e0b491d3f7cfbe145ad4da778535bfb13c444413dd35b9"
