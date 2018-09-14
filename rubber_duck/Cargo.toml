@@ -7,5 +7,4 @@ authors = ["Sam Sieber <swsieber@gmail.com>"]
 edition = '2018'
 
 [dependencies]
-rubber_duck_builder = { path = "../rubber_duck_builder"}
-rubber_duck_params = { path = "../rubber_duck_params"}
+rubber_duck_macro = { path = "../rubber_duck_macro"}

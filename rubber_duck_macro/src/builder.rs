@@ -1,10 +1,4 @@
-#![feature(proc_macro_gen)]
-
-extern crate proc_macro;
-extern crate proc_macro2;
-extern crate syn;
-#[macro_use]
-extern crate quote;
+use quote::quote;
 use syn::export::Span;
 use syn::export::ToTokens;
 use syn::AngleBracketedGenericArguments;
@@ -52,13 +46,12 @@ fn get_option_type(ty: Type) -> IsOption {
     }
 }
 
-#[proc_macro_attribute]
 pub fn gen_typesafe_builder(
-    _args: proc_macro::TokenStream,
-    input: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
+    _args: ::proc_macro::TokenStream,
+    input: ::proc_macro::TokenStream,
+) -> ::proc_macro::TokenStream {
     let generated_parts = {
-        let mut parsed: Item = parse_macro_input!(input as Item);
+        let parsed: Item = parse_macro_input!(input as Item);
         match parsed {
             Item::Struct(mut struct_item) => {
                 let parsed_fields = parse_fields(&mut struct_item.fields);
@@ -309,7 +302,7 @@ fn parse_fields(fields: &mut Fields) -> Vec<MyField> {
     let ret = fields
         .iter_mut()
         .map(|f_ref| {
-            let mut plucked_default_values = ::util::drain_map(&mut f_ref.attrs, |a| {
+            let mut plucked_default_values = crate::builder::util::drain_map(&mut f_ref.attrs, |a| {
                 //                println!("{:?}", a.interpret_meta());
                 a.interpret_meta().and_then(|m| match m {
                     Meta::Word(_) => None,

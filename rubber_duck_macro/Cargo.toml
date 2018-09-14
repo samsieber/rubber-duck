@@ -1,12 +1,17 @@
+cargo-features = ["edition"]
+
 [package]
-name = "rubber_duck_builder"
+name = "rubber_duck_macro"
 version = "0.1.0"
 authors = ["Sam Sieber <swsieber@gmail.com>"]
+edition = '2018'
 
 [dependencies]
 syn = { version = "0.15", features = ["full", "visit-mut", "visit", "extra-traits"] }
 proc-macro2 = { version = "0.4", features = ["nightly"] }
 quote = "0.6"
+
+#rubber_duck_builder = { path = "../rubber_duck_builder"}
 
 [lib]
 proc-macro = true

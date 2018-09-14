@@ -3,8 +3,6 @@ name = "example_api"
 version = "0.1.0"
 dependencies = [
  "rubber_duck 0.1.0",
- "rubber_duck_builder 0.1.0",
- "rubber_duck_params 0.1.0",
 ]
 
 [[package]]
@@ -34,21 +32,11 @@ dependencies = [
 name = "rubber_duck"
 version = "0.1.0"
 dependencies = [
- "rubber_duck_builder 0.1.0",
- "rubber_duck_params 0.1.0",
+ "rubber_duck_macro 0.1.0",
 ]
 
 [[package]]
-name = "rubber_duck_builder"
-version = "0.1.0"
-dependencies = [
- "proc-macro2 0.4.18 (registry+https://github.com/rust-lang/crates.io-index)",
- "quote 0.6.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "syn 0.15.1 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "rubber_duck_params"
+name = "rubber_duck_macro"
 version = "0.1.0"
 dependencies = [
  "proc-macro2 0.4.18 (registry+https://github.com/rust-lang/crates.io-index)",

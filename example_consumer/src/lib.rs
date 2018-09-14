@@ -24,25 +24,24 @@ mod testing {
 mod tests {
     #[test]
     fn only_named_works() {
-
         assert_eq!(
             "1) Hello hi, there The end.",
-        crate::testing::test_plain_macro(),
+            crate::testing::test_plain_macro(),
         );
 
         assert_eq!(
             "1) Hello hi, there The end.",
-        crate::testing::test_nested_macro(),
+            crate::testing::test_nested_macro(),
         );
 
         assert_eq!(
             "1) Hello hi, there The end.",
-        crate::testing::test_plain_fn(),
+            crate::testing::test_plain_fn(),
         );
 
         assert_eq!(
             "1) Hello hi, there The end.",
-        crate::testing::test_nested_fn(),
+            crate::testing::test_nested_fn(),
         );
 
     }

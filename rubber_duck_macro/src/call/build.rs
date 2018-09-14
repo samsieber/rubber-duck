@@ -1,14 +1,13 @@
-use crate::parse_fn;
-use crate::parse_quote;
-use proc_macro2;
+use super::parse_fn;
+use ::syn::parse_quote;
 use proc_macro2::Ident;
 use proc_macro2::Span;
 use quote::quote;
-use crate::ItemFn;
+use syn::ItemFn;
 
-pub fn gen_builder(structure: &parse_fn::Structure) -> proc_macro2::TokenStream {
+pub fn gen_builder(structure: &parse_fn::Structure) -> ::proc_macro2::TokenStream {
     let struct_name = Ident::new(
-        &crate::util::uppercase(&format!("{}", &structure.ident)),
+        &super::util::uppercase(&format!("{}", &structure.ident)),
         structure.ident.span(),
     );
 
@@ -36,11 +35,11 @@ pub fn gen_builder(structure: &parse_fn::Structure) -> proc_macro2::TokenStream 
     )
 }
 
-pub fn gen_macro(structure: &parse_fn::Structure) -> proc_macro2::TokenStream {
+pub fn gen_macro(structure: &parse_fn::Structure) -> ::proc_macro2::TokenStream {
     let named = structure.n_names();
     let name = &structure.ident;
     let struct_name = Ident::new(
-        &crate::util::uppercase(&format!("{}", &structure.ident)),
+        &super::util::uppercase(&format!("{}", &structure.ident)),
         Span::call_site(),
     );
 

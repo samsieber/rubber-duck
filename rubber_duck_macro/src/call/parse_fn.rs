@@ -1,4 +1,4 @@
-use crate::args::Args;
+use super::args::Args;
 use proc_macro2::Ident;
 use quote::quote;
 use std::collections::HashMap;

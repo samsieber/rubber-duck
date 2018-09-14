@@ -50,6 +50,18 @@ pub mod module {
     }
 }
 
+pub mod doc_test {
+    pub struct S {
+        name : String,
+        greeting: String,
+        answer: u32,
+    }
+
+    pub fn match_struct_S(S { name: test, greeting, answer} : S){
+
+    }
+}
+
 //use crate::module::is_a_test;
 use crate::module::open_file;
 

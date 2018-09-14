@@ -1,26 +1,17 @@
-#![recursion_limit = "128"]
-#![feature(proc_macro_gen)]
-
-extern crate proc_macro;
-extern crate proc_macro2;
-extern crate quote;
-extern crate syn;
-
 use quote::quote;
-use syn::parse_quote;
-use syn::{parse_macro_input, Item, ItemFn};
+use syn::{parse_macro_input, Item};
 
 mod args;
 mod build;
 mod parse_fn;
 mod util;
 
-#[proc_macro_attribute]
+
 pub fn gen_struct_sugar(
-    args: proc_macro::TokenStream,
-    input: proc_macro::TokenStream,
-) -> proc_macro::TokenStream {
-    let mut args = crate::args::parse_args(args);
+    args: ::proc_macro::TokenStream,
+    input: ::proc_macro::TokenStream,
+) -> ::proc_macro::TokenStream {
+    let mut args = self::args::parse_args(args);
 
     let generated_parts = {
         let mut parsed: Item = parse_macro_input!(input as Item);

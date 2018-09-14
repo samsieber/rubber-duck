@@ -2,8 +2,7 @@
 
 members = [
     "rubber_duck",
-    "rubber_duck_builder",
-    "rubber_duck_params",
+    "rubber_duck_macro",
 
 
     "example_api",
