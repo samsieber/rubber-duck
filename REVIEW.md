@@ -137,7 +137,7 @@ and that when necessary, builders were a viable alternative.
 
 This suggested special casing the Option<T> type. This died pretty down pretty quick - it's likely most attention went to the next thread.
 
-#### Pre-RFC Named Arguments (*Azerupi*):
+#### Pre-RFC Named Arguments (*Azurepi*):
 `Aug 2016`
 | [Internals Thread](https://internals.rust-lang.org/t/pre-rfc-named-arguments/3831)
 | [Internals Thread - Summary](https://internals.rust-lang.org/t/pre-rfc-named-arguments/3831/196)
