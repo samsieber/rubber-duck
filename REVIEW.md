@@ -7,6 +7,8 @@ review the discussion history and explored trade-offs and then propose a potenti
 
 I say potential path because after writing this, I'm still not entirely certain we should try to get this into Rust.
 
+__Edit__: _I've moved the history to the end as an appendix, because although valuable, I feel the section about concerns deserves more emphasis._
+
 ### Motivations
 
 __Explicitness__: Named Parameters make things more explicit. 
@@ -56,97 +58,7 @@ That can be both good and bad, encouraging both more consise APIs (1 fn with a c
 There is one other place that named arguments would shine: nesting builders. Building directed graphs in rust is tedious if builders are involved.
 You can nest them or not. Either way, it's hard to get a good feel for what a built tree actually looks like because the 
 the syntax for declaring a node vs setting an attribute is so similar.  
-    
-# Previous Attempts Timeline
-
-With all of that said, 
-here's an overview of various attempts to figure out how named & default parameters could be implemented in rust,
-and whether they should be.
-
-#### Rust PR: Default arguments and keyword arguments
-`June 2013` 
-| [Precursor Pull Request](https://github.com/rust-lang/rust/issues/6973) 
-| [Continued Reddit Discussion](https://www.reddit.com/r/rust/comments/26ojst/named_optional_parameters/)
-
-This was a general pull request to the rust-lang repository about creating functionality for named and default arguments.
-
-There were conflicting views in the thread but it seemed the prevailing idea was struct sugar with FRU.
-
-The conversation slowed because it wasn't a big priority pre 1.0, and eventually closed because it really should have been an RFC.
-
-`July 2014` Postponed
-
-#### RFC: Optional Paramters (*iopq*)
-`July 2014`
-| [Pull Request](https://github.com/rust-lang/rfcs/pull/152) 
-| [Rendered](https://github.com/iopq/rfcs/blob/40fd9c156cf6202219a42551ae2d0f3e8123005a/active/0000-arity-parameter-overloading.md)
-
-This suggested using optional parameters through writing different fn signatures as a more powerful alternative to just having default arguments.
-
-It didn't receive a lot of discussion being low priority pre 1.0.
-
-`July 2014` Postponed
-
-#### RFC: Default and Named Arguments (*kowakiwi*)
-`Sept 2014`
-| [Pull Request](https://github.com/rust-lang/rfcs/pull/257)
-| [Rendered](https://github.com/KokaKiwi/rfcs/blob/default_args/active/0000-default-arguments.md)
-        
-This RFC suggested making all arguments callable with named argument syntax, as well as proposing allowing default values for parameters.
-
-It suggested making argument names and argument defaults as part of the function signature.
-
-While it didn't receive much discussion at the time, it did spark a [wishlist issue in the RFCs repository](https://github.com/rust-lang/rfcs/issues/323) that started compiling all attempts at 
-anything like this. That was immediately marked as postponed - and it was very contentious.       
-        
-`Sept 2014` Postponed
-
-#### RFC: Struct Sugar (*bvssni*)
-`Oct 2014` 
-| [Internals](https://internals.rust-lang.org/t/struct-sugar/551/24)
-| [Pull Request](https://github.com/rust-lang/rfcs/pull/343)
-| [Rendered](https://github.com/bvssvni/rfcs/blob/master/active/0000-struct-sugar.md) 
-
-This was a huge RFC. The crux of it was using a `Optional` trait to provide default values,
-both for functions calls and struct initializers. It suggested adding sugar for creating structs that was
-to be very similar to the syntax used for named arguments in function calls. The main purpose of the RFC seemed to be minimizing the
-amount of textual changes in refactoring.
-
-The author admitted that they were mostly hoping to spark discussion and get a ball rolling, not necessarily getting the RFC approved.
-
-`Jan 2015` Postponed
-
-        
-#### RFC: Keyword Arguments (*iopq*)
-`Feb 2015`
-| [Pull Request](https://github.com/rust-lang/rfcs/pull/805)
-| [Rendered](https://github.com/iopq/rfcs/blob/2e41311ffedacab38f80073deb29044f1ae20f7e/active/0000-keyword-arguments.md)
-
-It suggested that named arguments be implemented as structural records (think tuples, but with named fields).
-There were some suggestions that it should be named structs instead.
-
-General concerns were that it's a heavy solution that encourages large functions that take many arguments, 
-and that when necessary, builders were a viable alternative.
-
-`Feb 2015` Postponed
-
-
-#### Pre-RFC: make function arguments for Option-typed arguments (*djc*)
-`July 2016` 
-| [Internals Thread](https://internals.rust-lang.org/t/pre-rfc-make-function-arguments-for-option-typed-arguments/3741)
-
-This suggested special casing the Option<T> type. This died pretty down pretty quick - it's likely most attention went to the next thread.
-
-#### Pre-RFC Named Arguments (*Azurepi*):
-`Aug 2016`
-| [Internals Thread](https://internals.rust-lang.org/t/pre-rfc-named-arguments/3831)
-| [Internals Thread - Summary](https://internals.rust-lang.org/t/pre-rfc-named-arguments/3831/196)
-
-There was a lot in this thread, and it eventually died down. You should read the summary thread. 
-
-It suggested a novel syntax of marking parameters in functions as named by using prefacing them with the `pub` keyword.
-
-
+ 
 # Approaches
 
 There seem to be 4 major approaches, with some variation on each of them being mentioned
@@ -156,13 +68,17 @@ There seem to be 4 major approaches, with some variation on each of them being m
 3) Use anonymous structs for passing named parameters
 4) Use named structs with sugar for building structs
 
-#### Implementation Concerns:
+See the appendix at the end for the history of the various dicussions, and links to them.
 
-These points come up in most of the discussions around named & default parameters
+## Implementation Concerns:
+
+These points come up in most of the discussions around named & default parameters. _This lists either things that are huge points of
+concern (things that if ignored would probably block passing) or open questions._
 
 __Opt-in__: The option to omit values and to use the named syntax must be something the API opts into.
 This rules out special casing the `Option` type as having a default value of `None` unless an additional marker or means
-of marking as a default/omittable value is adopted
+of marking as a default/omittable value is adopted. We should also avoid speical-casing the `Default` trait - it carries no
+semantics that the return value of `::default()` was cheap to make.
 
 __Ordering of Arguments__: Allowing both named and positional calling style for the same arguments has a non-trivial chance
 of leading to unintend behavior. It's possible that when removing labels from arguments that it switches what variable it
@@ -520,6 +436,94 @@ modifications to the type system, I'm still not certain that it's something wort
 
 I do think any conversations around it should be anchored in a comparison to the builder pattern - weaker, but easier to write.
 
+
+# Appendix: Previous Attempts Timeline
+
+Here's an overview of various attempts to figure out how named & default parameters could be implemented in rust,
+and whether they should be.
+
+#### Rust PR: Default arguments and keyword arguments
+`June 2013` 
+| [Precursor Pull Request](https://github.com/rust-lang/rust/issues/6973) 
+| [Continued Reddit Discussion](https://www.reddit.com/r/rust/comments/26ojst/named_optional_parameters/)
+
+This was a general pull request to the rust-lang repository about creating functionality for named and default arguments.
+
+There were conflicting views in the thread but it seemed the prevailing idea was struct sugar with FRU.
+
+The conversation slowed because it wasn't a big priority pre 1.0, and eventually closed because it really should have been an RFC.
+
+`July 2014` Postponed
+
+#### RFC: Optional Paramters (*iopq*)
+`July 2014`
+| [Pull Request](https://github.com/rust-lang/rfcs/pull/152) 
+| [Rendered](https://github.com/iopq/rfcs/blob/40fd9c156cf6202219a42551ae2d0f3e8123005a/active/0000-arity-parameter-overloading.md)
+
+This suggested using optional parameters through writing different fn signatures as a more powerful alternative to just having default arguments.
+
+It didn't receive a lot of discussion being low priority pre 1.0.
+
+`July 2014` Postponed
+
+#### RFC: Default and Named Arguments (*kowakiwi*)
+`Sept 2014`
+| [Pull Request](https://github.com/rust-lang/rfcs/pull/257)
+| [Rendered](https://github.com/KokaKiwi/rfcs/blob/default_args/active/0000-default-arguments.md)
+        
+This RFC suggested making all arguments callable with named argument syntax, as well as proposing allowing default values for parameters.
+
+It suggested making argument names and argument defaults as part of the function signature.
+
+While it didn't receive much discussion at the time, it did spark a [wishlist issue in the RFCs repository](https://github.com/rust-lang/rfcs/issues/323) that started compiling all attempts at 
+anything like this. That was immediately marked as postponed - and it was very contentious.       
+        
+`Sept 2014` Postponed
+
+#### RFC: Struct Sugar (*bvssni*)
+`Oct 2014` 
+| [Internals](https://internals.rust-lang.org/t/struct-sugar/551/24)
+| [Pull Request](https://github.com/rust-lang/rfcs/pull/343)
+| [Rendered](https://github.com/bvssvni/rfcs/blob/master/active/0000-struct-sugar.md) 
+
+This was a huge RFC. The crux of it was using a `Optional` trait to provide default values,
+both for functions calls and struct initializers. It suggested adding sugar for creating structs that was
+to be very similar to the syntax used for named arguments in function calls. The main purpose of the RFC seemed to be minimizing the
+amount of textual changes in refactoring.
+
+The author admitted that they were mostly hoping to spark discussion and get a ball rolling, not necessarily getting the RFC approved.
+
+`Jan 2015` Postponed
+
+        
+#### RFC: Keyword Arguments (*iopq*)
+`Feb 2015`
+| [Pull Request](https://github.com/rust-lang/rfcs/pull/805)
+| [Rendered](https://github.com/iopq/rfcs/blob/2e41311ffedacab38f80073deb29044f1ae20f7e/active/0000-keyword-arguments.md)
+
+It suggested that named arguments be implemented as structural records (think tuples, but with named fields).
+There were some suggestions that it should be named structs instead.
+
+General concerns were that it's a heavy solution that encourages large functions that take many arguments, 
+and that when necessary, builders were a viable alternative.
+
+`Feb 2015` Postponed
+
+
+#### Pre-RFC: make function arguments for Option-typed arguments (*djc*)
+`July 2016` 
+| [Internals Thread](https://internals.rust-lang.org/t/pre-rfc-make-function-arguments-for-option-typed-arguments/3741)
+
+This suggested special casing the Option<T> type. This died pretty down pretty quick - it's likely most attention went to the next thread.
+
+#### Pre-RFC Named Arguments (*Azurepi*):
+`Aug 2016`
+| [Internals Thread](https://internals.rust-lang.org/t/pre-rfc-named-arguments/3831)
+| [Internals Thread - Summary](https://internals.rust-lang.org/t/pre-rfc-named-arguments/3831/196)
+
+There was a lot in this thread, and it eventually died down. You should read the summary thread. 
+
+It suggested a novel syntax of marking parameters in functions as named by using prefacing them with the `pub` keyword.
 
 
 
