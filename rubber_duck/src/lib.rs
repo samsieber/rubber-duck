@@ -132,25 +132,31 @@
 //!
 //! ```
 //! mod module {
-//!    #[gen_struct_sugar(defaults(name = r#""Bob".to_owned()"#))]
-//!    pub fn is_a_test(name: String, message: String) -> String {
-//!        let i = 0;
-//!        let i = i + 1;
-//!        format!("{}) Hello {}, {} The end.", i, &name, &message)
-//!    }
-//! }
+//!   >    #[gen_struct_sugar(defaults(name = r#""Bob".to_owned()"#))]
+//!   >    pub fn is_a_test(name: String, message: String) -> String {
+//!       >        let i = 0;
+//!       >        let i = i + 1;
+//!       >        format!("{}) Hello {}, {} The end.", i, &name, &message)
+//!           >    }
+//!   > }
 //! ```
 //!
 //! One can call the function in a variety of ways
 //!
 //! ```
-//!     {
-//!         use crate::module::is_a_test
-//!         is_a_test!(message=> "there".to_owned(), name=>"hi".to_owned());
-//!     }
-//!
-//!     crate::module::is_a_test
+//! {
+//!     use crate::module::is_a_test
+//!      // Named form requires a macro
+//!     is_a_test!(message=> "Hi.".to_owned(), name=>"George".to_owned());  // 1) Hello George. Hi. The end.
+//!      // and lets you use defaults
+//!     is_a_test!(message=> "Hi.".to_owned());                             // 1) Hello Bob. Hi. The end.
+//!      // Positional form doesn't (need a macro or let you do defaults)
+//!     is_a_test("bob".to_owned(), "Hi.".to_owned());                      // 1) Hello Bob. Hi. The end.
+//! }
+//! // You don't even have to import it!
+//! crate::module::is_a_test!(message=> "there".to_owned(), name=>"hi".to_owned());
 //! ```
+
 pub mod macros {
     pub use rubber_duck_macro::*;
 }
