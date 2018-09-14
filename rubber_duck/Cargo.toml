@@ -5,6 +5,10 @@ name = "rubber_duck"
 version = "0.1.0"
 authors = ["Sam Sieber <swsieber@gmail.com>"]
 edition = '2018'
+description = "Enables building functions that can be called with named arg syntax"
+readme = "../README.md"
+license = "MIT"
+repository = "https://github.com/samsieber/rubber-duck"
 
 [dependencies]
 rubber_duck_macro = { version = "0.1.0", path = "../rubber_duck_macro"}
