@@ -5,7 +5,7 @@ Rubber duck is a library to facilitate writing functions that can be called with
 See the rust doc of the rubber-duck crate for usage information. 
 You'll need to checkout this repo and build the docs though, so here's a sample:
 
-> Given api declaration:
+> Given this api declaration:
 > 
 > ```rust
 > mod module {
