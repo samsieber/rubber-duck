@@ -257,7 +257,7 @@ What if we addressed the large decisions by breaking it up into multiple RFCs? I
 reduce the likelyhood of stagnating discussion. It would add the constraint that we wouldn't really want to spread a real
 feature across multiple RFCs, for the danger that only some RFCs make it in. They'd have to be coherent and stand on their own, at the very least, in a sequence.
 
-With that in mind, I'd like to propose a sugary path getting named & default parameters into Rust by using Structs to hold the named arguments.
+With that in mind, I'd like to propose a sugary path getting named & default parameters into Rust by using Structs to hold the named arguments. (Note: This is stronly inspired by bvssni's RFC an other's comments - this is largly synthesis, not really anything new.)
 
 Currently, that's not a very ergonomic solution for the following reasons:
 1) It's verbose when calling the function: you still have to import the struct & name it during creation
