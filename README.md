@@ -7,7 +7,7 @@ You'll need to checkout this repo and build the docs though, so here's a sample:
 
 > Given api declaration:
 > 
-> ```
+> ```rust
 > mod module {
 >    #[gen_struct_sugar(defaults(name = r#""Bob".to_owned()"#))]
 >    pub fn is_a_test(name: String, message: String) -> String {
@@ -20,7 +20,7 @@ You'll need to checkout this repo and build the docs though, so here's a sample:
 >
 > One can call the function in a variety of ways
 >
-> ```
+> ```rust
 > {
 >     use crate::module::is_a_test
 >      // Named form requires a macro
