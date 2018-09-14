@@ -81,8 +81,6 @@
 //!
 //! Furthermore, you can declare a) positional parameters and b) default values for named parameters
 //!
-//!
-//!
 //! ```
 //! #[gen_struct_sugar(
 //!        defaults( // You don't have to set defaults for all named parameters, but here we do
@@ -128,7 +126,7 @@
 //!
 //! #### Example:
 //!
-//! With this give api declaration:
+//! Given api declaration:
 //!
 //! ```
 //! mod module {
