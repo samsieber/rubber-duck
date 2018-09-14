@@ -5,6 +5,9 @@ name = "rubber_duck_macro"
 version = "0.1.0"
 authors = ["Sam Sieber <swsieber@gmail.com>"]
 edition = '2018'
+description = "The proc macros for the rubber-duck crate (macros for building named-arg functions)"
+license = "MIT"
+repository = "https://github.com/samsieber/rubber-duck"
 
 [dependencies]
 syn = { version = "0.15", features = ["full", "visit-mut", "visit", "extra-traits"] }

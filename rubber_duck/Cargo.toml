@@ -7,4 +7,4 @@ authors = ["Sam Sieber <swsieber@gmail.com>"]
 edition = '2018'
 
 [dependencies]
-rubber_duck_macro = { path = "../rubber_duck_macro"}
+rubber_duck_macro = { version = "0.1.0", path = "../rubber_duck_macro"}
