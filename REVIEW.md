@@ -77,7 +77,7 @@ concern (things that if ignored would probably block passing) or open questions.
 
 __Opt-in__: The option to omit values and to use the named syntax must be something the API opts into.
 This rules out special casing the `Option` type as having a default value of `None` unless an additional marker or means
-of marking as a default/omittable value is adopted. We should also avoid speical-casing the `Default` trait - it carries no
+of marking as a default/omittable value is adopted. We should also avoid special-casing the `Default` trait - it carries no
 semantics that the return value of `::default()` was cheap to make.
 
 __Ordering of Arguments__: Allowing both named and positional calling style for the same arguments has a non-trivial chance
