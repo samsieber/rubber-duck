@@ -1,5 +1,7 @@
 #![recursion_limit = "128"]
-#![feature(proc_macro_gen)]
+#![feature(proc_macro_hygiene)]
+
+extern crate proc_macro;
 
 mod call;
 mod builder;
