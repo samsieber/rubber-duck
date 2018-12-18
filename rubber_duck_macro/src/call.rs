@@ -1,17 +1,12 @@
 use quote::quote;
 use syn::{parse_macro_input, Item};
-
-mod args;
-mod build;
-mod parse_fn;
-mod util;
-
+use crate::{build, parse_fn, args};
 
 pub fn gen_struct_sugar(
     args: ::proc_macro::TokenStream,
     input: ::proc_macro::TokenStream,
 ) -> ::proc_macro::TokenStream {
-    let mut args = self::args::parse_args(args);
+    let mut args = crate::args::parse_args(args);
 
     let generated_parts = {
         let mut parsed: Item = parse_macro_input!(input as Item);

@@ -5,18 +5,21 @@ use rubber_duck::macros::*;
 pub use rubber_duck::core::*;
 
 use std::fs::File;
+use std::path::PathBuf;
 
 pub mod module {
     use super::*;
     use std::fs::File;
     use std::fs::OpenOptions;
     use std::path::Path;
+    use std::path::PathBuf;
 
     #[gen_struct_sugar(defaults(name = r#""Bob".to_owned()"#))]
     pub fn is_a_test(name: String, message: String) -> String {
         let i = 0;
         let i = i + 1;
-        format!("{}) Hello {}, {} The end.", i, &name, &message)
+//        format!("{}) Hello {}, {} The end.", i, &name, &message)
+        String::new()
     }
 
     #[gen_struct_sugar(
@@ -31,7 +34,7 @@ pub mod module {
         positionals(path),
     )]
     pub fn open_file(
-        path: impl AsRef<Path>,
+        path: PathBuf,
         read: bool,
         write: bool,
         append: bool,
@@ -66,7 +69,7 @@ pub mod doc_test {
 use crate::module::open_file;
 
 pub fn testing_call() -> std::io::Result<File> {
-    open_file!("test.txt", read => true)
+    open_file!(PathBuf::from("test.txt"), read => true)
 }
 
 #[cfg(test)]
@@ -76,10 +79,11 @@ mod tests {
     use std::error::Error;
     use std::io::Read;
     use std::result::Result::Ok;
+    use std::path::PathBuf;
 
     #[test]
     fn open_file_works() -> Result<(), Box<Error>> {
-        let mut handle = crate::module::open_file!("test.txt", read => true)?;
+        let mut handle = crate::module::open_file!(PathBuf::from("test.txt"), read => true)?;
         let mut contents = String::new();
         handle.read_to_string(&mut contents)?;
 

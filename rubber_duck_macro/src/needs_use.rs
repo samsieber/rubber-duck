@@ -1,5 +1,5 @@
 fn parse_attrs(args: &mut ItemFn) -> Vec<ParsedAttr> {
-  ::util::drain_map(&mut args.attrs, |attr| {
+  crate::util::drain_map(&mut args.attrs, |attr| {
     let meta = attr.interpret_meta();
     if let Some(meta) = meta {
       Some(parse_meta(&meta))

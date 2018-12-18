@@ -1,4 +1,4 @@
-use super::args::Args;
+use crate::args::Args;
 use proc_macro2::Ident;
 use quote::quote;
 use std::collections::HashMap;
@@ -12,59 +12,72 @@ use syn::Pat;
 use syn::Type;
 
 #[derive(Clone)]
-pub struct PositionalField {
-    pub name: Ident,
-    pub ty: Type,
+pub enum FieldRole {
+    Named(NamedData),
+    Positional,
 }
 
 #[derive(Clone)]
-pub struct NamedField {
+pub struct NamedData {
+    pub default: Option<Expr>,
+}
+
+
+#[derive(Clone)]
+pub struct Field<T> {
     pub name: Ident,
     pub ty: Type,
-    pub default: Option<Expr>,
+    pub extra: T,
 }
 
 #[derive(Clone)]
 pub struct Structure {
-    pub positional: Vec<PositionalField>,
-    pub named: Vec<NamedField>,
+    pub fields: Vec<Field<FieldRole>>,
     pub ident: Ident,
+}
+
+impl Field<FieldRole> {
+    pub fn has_default(&self) -> bool {
+        match self.extra {
+            FieldRole::Named(ref def) => def.default.is_some(),
+            FieldRole::Positional => false,
+        }
+    }
+
+    pub fn default_expr(&self) -> Option<Expr> {
+        match self.extra {
+            FieldRole::Named(ref def) => def.default.clone(),
+            FieldRole::Positional => None,
+        }
+    }
 }
 
 #[allow(dead_code)]
 impl Structure {
     pub fn names(&self) -> Vec<Ident> {
-        let mut p = self.p_names();
-        let mut n = self.n_names();
-
-        p.append(&mut n);
-
-        p
-    }
-
-    pub fn p_names(&self) -> Vec<Ident> {
-        self.positional.iter().map(|p| p.name.clone()).collect()
-    }
-
-    pub fn n_names(&self) -> Vec<Ident> {
-        self.named.iter().map(|n| n.name.clone()).collect()
+        self.fields.iter().map(|v| v.name.clone()).collect()
     }
 
     pub fn types(&self) -> Vec<Type> {
-        let mut p = self.p_types();
-        let mut n = self.n_types();
-
-        p.append(&mut n);
-
-        p
+        self.fields.iter().map(|v| v.ty.clone()).collect()
     }
 
-    pub fn p_types(&self) -> Vec<Type> {
-        self.positional.iter().map(|p| p.ty.clone()).collect()
+    pub fn positional(&self) -> impl Iterator<Item=&Field<FieldRole>> {
+        self.fields.iter().filter(|&v| match v.extra {
+            FieldRole::Positional => true,
+            _ => false}
+        )
     }
 
-    pub fn n_types(&self) -> Vec<Type> {
-        self.named.iter().map(|n| n.ty.clone()).collect()
+    pub fn named(&self) -> Vec<Field<NamedData>> {
+        self.fields.iter().filter_map(|v| match &v.extra {
+            FieldRole::Positional => None,
+            FieldRole::Named(ref def) => Some(Field {
+                name: v.name.clone(),
+                ty: v.ty.clone(),
+                extra: def.clone(),
+            })
+        }).collect()
     }
 }
 
@@ -89,22 +102,24 @@ pub fn parse_field_decl(args: &mut Args, fn_item: &mut ItemFn) -> Structure {
             if unvalidated.default.is_some() {
                 panic!("Cannot set a default value for a positional field");
             }
-            positional.push(PositionalField {
+            positional.push(Field {
                 name: unvalidated.name,
                 ty: unvalidated.ty,
+                extra: FieldRole::Positional
             })
         } else {
-            named.push(NamedField {
+            named.push(Field {
                 name: unvalidated.name,
                 ty: unvalidated.ty,
-                default: unvalidated.default,
+                extra: FieldRole::Named(NamedData { default: unvalidated.default}),
             })
         }
     }
 
+    let fields = positional.into_iter().chain(named.into_iter()).collect();
+
     Structure {
-        positional,
-        named,
+        fields,
         ident,
     }
 }

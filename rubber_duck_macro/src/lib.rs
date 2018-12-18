@@ -1,18 +1,13 @@
 #![recursion_limit = "128"]
-#![feature(proc_macro_hygiene)]
 
 extern crate proc_macro;
 
 mod call;
 mod builder;
-
-#[proc_macro_attribute]
-pub fn gen_typesafe_builder(
-  args: ::proc_macro::TokenStream,
-  input: ::proc_macro::TokenStream,
-) -> ::proc_macro::TokenStream {
-  builder::gen_typesafe_builder(args, input)
-}
+mod util;
+mod args;
+mod build;
+mod parse_fn;
 
 #[proc_macro_attribute]
 pub fn gen_struct_sugar(
