@@ -1,5 +1,5 @@
-#![feature(proc_macro_hygiene)]
-#![feature(decl_macro)]
+#![cfg_attr(feature = "nightly", feature(proc_macro_hygiene))]
+#![cfg_attr(feature = "nightly", feature(decl_macro))]
 use rubber_duck::macros::*;
 #[doc(hidden)]
 pub use rubber_duck::core::*;

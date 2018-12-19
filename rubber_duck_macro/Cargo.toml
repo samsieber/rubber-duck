@@ -13,7 +13,9 @@ proc-macro2 = { version = "0.4", features = ["nightly"] }
 proc-macro-hack = "0.5"
 quote = "0.6"
 
-#rubber_duck_builder = { path = "../rubber_duck_builder"}
+[features]
+default = []
+nightly = ["proc-macro2/nightly"]
 
 [lib]
 proc-macro = true

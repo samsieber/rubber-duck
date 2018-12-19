@@ -11,3 +11,7 @@ repository = "https://github.com/samsieber/rubber-duck"
 [dependencies]
 rubber_duck_macro = { version = "0.1.0", path = "../rubber_duck_macro"}
 proc-macro-hack = "0.5"
+
+[features]
+default = []
+nightly = ["rubber_duck_macro/nightly"]

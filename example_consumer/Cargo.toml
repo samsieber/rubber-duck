@@ -6,3 +6,7 @@ edition = '2018'
 
 [dependencies]
 example_api = { path = "../example_api"}
+
+[features]
+default = []
+nightly = ["example_api/nightly"]

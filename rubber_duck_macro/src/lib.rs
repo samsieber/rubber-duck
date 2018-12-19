@@ -1,5 +1,3 @@
-#![feature(proc_macro_internals)]
-#![feature(trace_macros)]
 #![recursion_limit = "128"]
 
 extern crate proc_macro;
@@ -24,24 +22,27 @@ pub fn gen_struct_sugar(
 
   let generated_parts = {
     let mut parsed: Item = parse_macro_input!(input as Item);
-    let (builder_impl, macro_dec) = match parsed {
+    let structure = match parsed {
       Item::Fn(ref mut fn_item) => {
         let structure = parse_fn::parse_field_decl(&mut args, fn_item);
-
-        let builder_impl = builder::create_typesafe_builder(&structure);
-
-        let macro_dec = build::gen_macro(&structure);
-
         build::mod_block_add_defaults(fn_item, &structure);
-
-        (builder_impl, macro_dec)
+        structure
       }
       _ => {
         panic!("Can only be used on free-standing fn declarations");
       }
     };
 
-    vec![builder_impl, quote!(#parsed), macro_dec]
+    let builder_impl = builder::create_typesafe_builder(&structure);
+
+    let mut generated_parts = vec![builder_impl, quote!(#parsed)];
+
+    if cfg!(feature = "nightly") {
+      let macro_dec = build::gen_macro(&structure);
+      generated_parts.push(macro_dec)
+    }
+
+    generated_parts
   };
 
   let generated = quote!(#(#generated_parts)*);

@@ -7,3 +7,7 @@ edition = '2018'
 [dependencies]
 rubber_duck = { path = "../rubber_duck"}
 #base = { path = "../base"}
+
+[features]
+default = []
+nightly = ["rubber_duck/nightly"]

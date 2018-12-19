@@ -9,7 +9,6 @@ use syn::{braced, bracketed, parenthesized, parse_quote};
 use syn::parse::ParseBuffer;
 use syn::TypePath;
 use syn::ExprCall;
-use proc_macro::bridge::TokenTree;
 
 
 struct NamedArgCall {
@@ -143,7 +142,7 @@ pub fn n(input: TokenStream) -> TokenStream {
         quote!(.#name(#expr))
     });
     quote!({
-        use crate::{Deconstruct, Call};
+        use $crate::{Deconstruct, Call};
         let mut built = #call::builder()
             #(#pos_args)*
             #(#name_args)*;
