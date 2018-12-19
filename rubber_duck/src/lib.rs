@@ -1,3 +1,4 @@
+#![feature(proc_macro_hygiene)]
 #![feature(decl_macro)]
 
 //! # Overview
@@ -58,7 +59,7 @@
 //!
 //! ```
 //! // Allows us to generate macros from macros
-//! #![feature(proc_macro_gen)]
+//! #![feature(proc_macro_hygiene)]
 //! // Allows the use of declarative macros 2.0 (which are generated from the proc macro
 //! #![feature(decl_macro)]
 //!
@@ -175,12 +176,56 @@ pub mod core{
     }
 
     pub struct Unset;
+
+    pub use crate::{Call, Deconstruct};
 }
 
+pub trait Call<Args, Res> {
+    fn apply(&self, args: Args) -> Res;
+}
+
+pub trait Deconstruct<Args> {
+    fn deconstruct(self) -> Args;
+}
+
+use proc_macro_hack::proc_macro_hack;
+
+#[proc_macro_hack]
+pub use rubber_duck_macro::n;
+
+macro_rules! impl_call {
+    ($($TT:ident),*) => {
+        #[allow(non_snake_case)]
+        impl <$($TT,)* R, FN> Call<($($TT,)*), R> for FN where FN: Fn($($TT,)*) -> R {
+
+            fn apply(&self, ($($TT,)*): ($($TT,)*)) -> R {
+                self($($TT,)*)
+            }
+        }
+    }
+}
+
+impl_call!(A);
+impl_call!(A,B);
+impl_call!(A,B,C);
+impl_call!(A,B,C,D);
+impl_call!(A,B,C,D,E);
+impl_call!(A,B,C,D,E,F);
+impl_call!(A,B,C,D,E,F,G);
+impl_call!(A,B,C,D,E,F,G,H);
+impl_call!(A,B,C,D,E,F,G,H,I);
+
 #[cfg(test)]
-mod tests {
+mod test {
+    use crate::*;
+
+    fn test_call(name: String) -> String {
+        name
+    }
+
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn test() {
+        let tt = test_call;
+        tt.apply(("Hello".to_string(),));
     }
 }

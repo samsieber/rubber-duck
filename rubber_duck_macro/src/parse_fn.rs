@@ -50,6 +50,13 @@ impl Field<FieldRole> {
             FieldRole::Positional => None,
         }
     }
+
+    pub fn is_positional(&self) -> bool {
+        match self.extra {
+            FieldRole::Named(_) => false,
+            FieldRole::Positional => true,
+        }
+    }
 }
 
 #[allow(dead_code)]

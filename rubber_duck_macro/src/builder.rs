@@ -157,31 +157,55 @@ pub fn create_typesafe_builder(structure: &Structure) -> proc_macro2::TokenStrea
 
 
     // impl Builder Setters
-
     let mut quoted_impls = structure.fields
         .iter()
         .enumerate()
         .map(|(idx, field)| {
             let mut impl_types = base_types();
-            if !field.has_default() {
-                impl_types.remove(idx);
+            if field.is_positional() {
+                impl_types = impl_types.into_iter().skip(idx+1).collect();
+            } else {
+                if !field.has_default(){
+                    impl_types.remove(idx); // Corresponds to the else block in the struct types map if statement
+                }
             }
-            let struct_types = structure.fields
+            let struct_types : Vec<Type> = structure.fields
                 .iter()
                 .enumerate()
                 .map(|(inner_idx, inner_field)| {
-                    let t: Type = if inner_idx != idx || field.has_default() {
+                    // Earlier positional fields must be set when calling positional fields
+                    if field.is_positional() && inner_field.is_positional() && inner_idx < idx {
+                        inner_field.ty.clone()
+                    // We are generic over other fields
+                    } else if inner_idx != idx {
                         syn::parse_str(&format!("{}", inner_field.name)).unwrap()
+                    // We are don't care about our own concrete type if there's a default (e.g. work for self or unset)
+                    } else if field.has_default(){
+                        syn::parse_str(&format!("{}", inner_field.name)).unwrap()
+                    // If a field has no default
                     } else {
                         syn::parse_str("Unset").unwrap()
-                    };
-                    t
-                }).collect::<Vec<_>>();
+                    }
+                }).collect();
 
             let mut fn_types = base_types();
+            if field.is_positional() {
+                let mut before_idx = 0;
+                while before_idx < idx {
+                    let ty = {let ty = &structure.fields[before_idx].ty; quote!(#ty)};
+                    fn_types[before_idx] = ty;
+                    before_idx += 1;
+                }
+            }
             fn_types[idx] = { let ty = &field.ty; quote!(#ty) };
 
-            let fn_name = &field.name;
+            let next = Ident::new("next", field.name.span());
+
+            let fn_name = if field.is_positional() {
+                &next
+            } else {
+                &field.name
+            };
 
             let value_type = &field.ty;
 
@@ -193,8 +217,6 @@ pub fn create_typesafe_builder(structure: &Structure) -> proc_macro2::TokenStrea
                     let n = &v.name;
                     quote!(self.#n)
                 });
-
-//                        println!("{} - {}", impl_types.len(), struct_types.len());
 
             let option_type = get_option_type(value_type.clone());
 
@@ -250,6 +272,23 @@ pub fn create_typesafe_builder(structure: &Structure) -> proc_macro2::TokenStrea
 
 
     // impl Deconstruct<Args> for Builder
+    parts.push({
+        let field_names = structure.fields.iter().map(|v| &v.name);
+        let struct_types_generic = structure.fields.iter().map(|v| &v.ty);
+        let struct_types_struct = structure.fields.iter().map(|v| &v.ty);
+        let struct_types_return = structure.fields.iter().map(|v| &v.ty);
+
+        quote!(
+          #[allow(non_camel_case_types)]
+          impl crate::Deconstruct<(#(#struct_types_generic,)*)> for #builder_name<#(#struct_types_struct),*>{
+            fn deconstruct(self) -> (#(#struct_types_return),*) {
+              (
+                #(self.#field_names,)*
+              )
+            }
+          }
+        )
+    });
 
     quote!(#(#parts)*)
 }

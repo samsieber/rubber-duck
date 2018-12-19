@@ -8,8 +8,9 @@ license = "MIT"
 repository = "https://github.com/samsieber/rubber-duck"
 
 [dependencies]
-syn = { version = "0.15", features = ["full", "visit-mut", "visit", "extra-traits"] }
+syn = { version = "0.15", features = ["full", "visit-mut", "visit", "extra-traits", "printing", "parsing"] }
 proc-macro2 = { version = "0.4", features = ["nightly"] }
+proc-macro-hack = "0.5"
 quote = "0.6"
 
 #rubber_duck_builder = { path = "../rubber_duck_builder"}

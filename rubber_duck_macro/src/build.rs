@@ -7,36 +7,6 @@ use syn::ItemFn;
 use crate::parse_fn::FieldRole;
 
 pub fn gen_builder(structure: &parse_fn::Structure) -> ::proc_macro2::TokenStream {
-    let struct_name = Ident::new(
-        &crate::util::uppercase(&format!("{}", &structure.ident)),
-        structure.ident.span(),
-    );
-
-    let field_decs = structure.fields.iter().map(|f| {
-        let name = &f.name;
-        let ty = &f.ty;
-        let attr = if let FieldRole::Named(ref named_data) = f.extra {
-            if let Some(ref _def) = named_data.default {
-                quote!(#[default = "None"])
-            } else {
-                quote!()
-            }
-        } else {
-            quote!()
-        };
-
-        quote!(
-        #attr
-        pub #name: #ty,
-      )
-    });
-
-    let struct_decl = quote!(
-        #[doc(hidden)]
-        pub struct #struct_name {
-            #(#field_decs)*
-        }
-    );
 
     crate::builder::create_typesafe_builder(structure)
 }
@@ -57,9 +27,8 @@ pub fn gen_macro(structure: &parse_fn::Structure) -> ::proc_macro2::TokenStream 
     });
     let p_expr_expanders = structure.positional().enumerate().map(|(i, p)| {
         let p_num = Ident::new(&format!("p{}", i), Span::call_site());
-        let p_ident = &p.name;
+        let p_ident = Ident::new("next", Span::call_site());
         let res = quote!(.#p_ident($#p_num));
-        eprintln!("{}", res);
         res
     });
 
@@ -77,8 +46,6 @@ pub fn gen_macro(structure: &parse_fn::Structure) -> ::proc_macro2::TokenStream 
                 )
         }}
     );
-
-    eprintln!("{}", &quoted);
 
     quoted
 }
