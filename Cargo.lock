@@ -2,7 +2,7 @@
 name = "example_api"
 version = "0.1.0"
 dependencies = [
- "rubber_duck 0.2.0",
+ "rubber_duck 0.2.1",
 ]
 
 [[package]]
@@ -40,7 +40,7 @@ dependencies = [
 
 [[package]]
 name = "rubber_duck"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "proc-macro-hack 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "rubber_duck_macro 0.2.0",

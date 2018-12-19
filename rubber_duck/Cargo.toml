@@ -1,10 +1,10 @@
 [package]
 name = "rubber_duck"
-version = "0.2.0"
+version = "0.2.1"
 authors = ["Sam Sieber <swsieber@gmail.com>"]
 edition = '2018'
 description = "Enables building functions that can be called with named arg syntax"
-readme = "../README.md"
+readme = "README.md"
 license = "MIT"
 repository = "https://github.com/samsieber/rubber-duck"
 

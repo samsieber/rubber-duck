@@ -15,11 +15,12 @@ That annotation does the following:
     * The field type is wrapped in an Option (e.g. T changes from T to Option<T>)
     * A default value of None is specified on the builder
     * And with type of Option<T>, the builder setter for the field accepts T or Option<T>
- * The positional argumentss can be specified as well (no defaults allowed for those)
- * A macro is generated with the same name as the function, which accepts named parameters
+ * The positional arguments can be specified as well (no defaults allowed for those)
+ * A macro is generated with the same name as the function, which accepts named parameters (nightly only)
     * creates the builder
     * sets whatever arguments are passed in
     * calls build (which will be a compile error if not all named values are provided if the lack defaults)
+ * Another macro exits as well - `n!` which you wrap a function call with to enable named/default arg syntax. 
 
  So how this all works out is that we overload the method name in several namespaces (fn, struct and macro),
  such that the consumer can just us the plain fn or the macro
@@ -195,3 +196,5 @@ mod nightly_only {
 // You don't even have to import it!
 crate::module::is_a_test!("George", greeting=> "Hi.", message=> "Rust is cool");
 ```
+
+Also, take a look at the example_api and example_consumer directories in the github repository.
