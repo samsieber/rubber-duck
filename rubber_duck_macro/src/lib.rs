@@ -50,7 +50,6 @@ pub fn gen_struct_sugar(
   generated.into()
 }
 
-/// Add one to an expression.
 #[proc_macro_hack]
 pub fn n(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
   call::n(input)

@@ -33,12 +33,12 @@ mod on_stable {
     mod testing {
         use example_api::n;
 
-        pub fn test_plain_path() -> String {
+        pub fn test_plain_wrapping() -> String {
             use example_api::module::is_a_test;
             n!(is_a_test{{message:"there".to_owned(), name:"hi".to_owned()}})
         }
 
-        pub fn test_nested_path() -> String {
+        pub fn test_nested_wrapping() -> String {
             use example_api::module;
             n!(module::is_a_test{{message:"there".to_owned(), name:"hi".to_owned()}})
         }
@@ -57,17 +57,20 @@ mod on_stable {
     #[cfg(test)]
     mod tests {
         #[test]
-        fn only_named_works() {
+        fn test_fn_wrapping() {
             assert_eq!(
                 "1) Hello hi, there The end.",
-                super::testing::test_plain_path(),
+                super::testing::test_plain_wrapping(),
             );
 
             assert_eq!(
                 "1) Hello hi, there The end.",
-                super::testing::test_nested_path(),
+                super::testing::test_nested_wrapping(),
             );
+        }
 
+        #[test]
+        fn test_fns(){
             assert_eq!(
                 "1) Hello hi, there The end.",
                 super::testing::test_plain_fn(),

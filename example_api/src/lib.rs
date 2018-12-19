@@ -20,7 +20,6 @@ pub mod module {
         let i = 0;
         let i = i + 1;
         format!("{}) Hello {}, {} The end.", i, &name, &message)
-//        String::new()
     }
 
     #[gen_struct_sugar(
@@ -31,7 +30,6 @@ pub mod module {
         let i = 0;
         let i = i + 1;
         format!("{}) From {}, hello {}, {} The end.", i, &loc, &name, &message)
-//        String::new()
     }
 
     #[gen_struct_sugar(
