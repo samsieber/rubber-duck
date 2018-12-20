@@ -78,7 +78,7 @@ rubber_duck = "0.2"
 
 Then add this at the top of your lib.rs
 
-```
+```rust
 // The following two lines (well, 4 if you count comments) are only needed when using features=["nightly"]
 // Allows us to generate macros from macros
 #![feature(proc_macro_hygiene)]
@@ -96,7 +96,7 @@ pub use rubber_duck::core::*;
 #### Annotating Functions
 To make a function callable with named syntax, in the same mod as the function, import the macros:
 
-```
+```rust
 use ::rubber_duck::macros::*;
 ```
 
@@ -105,7 +105,7 @@ that can be called with named syntax.
 
 Furthermore, you can declare a) positional parameters and b) default values for named parameters
 
-```
+```rust
 #[gen_struct_sugar(
        defaults( // You don't have to set defaults for all named parameters, but here we do
            read = "false",
